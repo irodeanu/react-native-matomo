@@ -36,12 +36,15 @@ static NSString * const MatamoAppTrackingKey = @"@@Matamo-tracking-version@@";
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(initTracker: (NSString*)url id:(NSNumber* _Nonnull) id)
+RCT_EXPORT_METHOD(initTracker: (NSString*)url id:(NSNumber* _Nonnull) id dimension:(NSString* _Nullable) dimension)
 {
 #if DEBUG
     RCTLogInfo(@"Initing tracker");
 #endif
     tracker = [[MatomoTracker alloc] initWithSiteId:[id stringValue] baseURL:[NSURL URLWithString: url] userAgent: nil];
+    if (dimension != nil) {
+        [tracker setDimension:dimension forIndex:1];
+    }
 }
 
 RCT_EXPORT_METHOD(setUserId:(NSString* _Nonnull)userID)

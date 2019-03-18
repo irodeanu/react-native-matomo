@@ -23,11 +23,17 @@ public class MatomoModule extends ReactContextBaseJavaModule implements Lifecycl
 
     private Matomo matomo;
     private Tracker mMatomoTracker;
+    private TrackHelper trackHelper;
 
     @ReactMethod
-    public void initTracker(String url, int id) {
+    public void initTracker(String url, int id, String dimension) {
         TrackerBuilder builder = TrackerBuilder.createDefault(url, id);
         mMatomoTracker = builder.build(Matomo.getInstance(getReactApplicationContext()));
+        if (dimension != null) {
+            trackHelper = TrackHelper.track().dimension(1, dimension);
+        } else {
+            trackHelper = TrackHelper.track();
+        }
     }
 
     @ReactMethod
@@ -45,7 +51,7 @@ public class MatomoModule extends ReactContextBaseJavaModule implements Lifecycl
         if (mMatomoTracker == null) {
             throw new RuntimeException("Tracker must be initialized before usage");
         }
-        TrackHelper.track().screen(screen).title(title).with(mMatomoTracker);
+        trackHelper.screen(screen).title(title).with(mMatomoTracker);
     }
 
     @ReactMethod
@@ -61,7 +67,7 @@ public class MatomoModule extends ReactContextBaseJavaModule implements Lifecycl
         if (values.hasKey("value") && !values.isNull("value")) {
             value = (float)values.getDouble("value");
         }
-        TrackHelper.track().event(category, action).name(name).value(value).with(mMatomoTracker);
+        trackHelper.event(category, action).name(name).value(value).with(mMatomoTracker);
     }
 
     @ReactMethod
@@ -73,7 +79,7 @@ public class MatomoModule extends ReactContextBaseJavaModule implements Lifecycl
         if (values.hasKey("revenue") && !values.isNull("revenue")) {
             revenue = (float)values.getDouble("revenue");
         }
-        TrackHelper.track().goal(goalId).revenue(revenue).with(mMatomoTracker);
+        trackHelper.goal(goalId).revenue(revenue).with(mMatomoTracker);
     }
 
     @ReactMethod
@@ -92,7 +98,7 @@ public class MatomoModule extends ReactContextBaseJavaModule implements Lifecycl
         if (values.hasKey("target") && !values.isNull("target")) {
             target = values.getString("target");
         }
-        TrackHelper.track().impression(name).piece(piece).target(target).with(mMatomoTracker);
+        trackHelper.impression(name).piece(piece).target(target).with(mMatomoTracker);
     }
 
     @ReactMethod
@@ -112,7 +118,7 @@ public class MatomoModule extends ReactContextBaseJavaModule implements Lifecycl
         if (values.hasKey("interaction") && !values.isNull("interaction")) {
             interaction = values.getString("interaction");
         }
-        TrackHelper.track().interaction(name, interaction).piece(piece).target(target).with(mMatomoTracker);
+        trackHelper.interaction(name, interaction).piece(piece).target(target).with(mMatomoTracker);
     }
 
     @ReactMethod
@@ -123,7 +129,7 @@ public class MatomoModule extends ReactContextBaseJavaModule implements Lifecycl
         if (mMatomoTracker == null) {
             throw new RuntimeException("Tracker must be initialized before usage");
         }
-        TrackHelper.track().download().with(mMatomoTracker);
+        trackHelper.download().with(mMatomoTracker);
     }
 
     @Override
