@@ -80,10 +80,40 @@ public class MatomoModule extends ReactContextBaseJavaModule implements Lifecycl
     public void trackCampaign(String name, String keyboard) {}
 
     @ReactMethod
-    public void trackContentImpression(@NonNull String name, @NonNull ReadableMap values) {}
+    public void trackContentImpression(@NonNull String name, @NonNull ReadableMap values) {
+        if (mMatomoTracker == null) {
+            throw new RuntimeException("Tracker must be initialized before usage");
+        }
+        String piece = null;
+        String target = null;
+        if (values.hasKey("piece") && !values.isNull("piece")) {
+            piece = values.getString("piece");
+        }
+        if (values.hasKey("target") && !values.isNull("target")) {
+            target = values.getString("target");
+        }
+        TrackHelper.track().impression(name).piece(piece).target(target).with(mMatomoTracker);
+    }
 
     @ReactMethod
-    public void trackContentInteraction(@NonNull String name, @NonNull ReadableMap values) {}
+    public void trackContentInteraction(@NonNull String name, @NonNull ReadableMap values) {
+        if (mMatomoTracker == null) {
+            throw new RuntimeException("Tracker must be initialized before usage");
+        }
+        String piece = null;
+        String target = null;
+        String interaction = null;
+        if (values.hasKey("piece") && !values.isNull("piece")) {
+            piece = values.getString("piece");
+        }
+        if (values.hasKey("target") && !values.isNull("target")) {
+            target = values.getString("target");
+        }
+        if (values.hasKey("interaction") && !values.isNull("interaction")) {
+            interaction = values.getString("interaction");
+        }
+        TrackHelper.track().interaction(name, interaction).piece(piece).target(target).with(mMatomoTracker);
+    }
 
     @ReactMethod
     public void trackSearch(@NonNull String query, @NonNull ReadableMap values) {}
